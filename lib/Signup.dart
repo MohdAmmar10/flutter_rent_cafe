@@ -1,10 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:rent_cafe/main.dart';
+import 'package:rent_cafe/MyBottomNav.dart';
 import 'Login.dart';
-import 'package:checkbox_formfield/checkbox_formfield.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/rendering.dart';
+import 'HomePage.dart';
 class Signup extends StatefulWidget {
 
   @override
@@ -12,9 +15,11 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-    GlobalKey<FormState> _key = new GlobalKey();
+  GlobalKey<FormState> _key = new GlobalKey();
   final scaffoldKey = new GlobalKey<ScaffoldState>();
-  String uname,email,pno,pass,gender,male="male",female="female";
+  final auth = FirebaseAuth.instance;
+  final DBRef= FirebaseDatabase.instance.reference();
+  String uname,_email,pno,pass,gender,male="Male",female="Female";
   bool _validate = false;
   bool _passwordVisible = false;
   @override
@@ -58,16 +63,15 @@ Widget formUI() {
                     child: TextFormField(
                         decoration: InputDecoration(
                       border: InputBorder.none,
-                      isCollapsed:true,
                       hintText: 'Email',
                       ),
                       keyboardType: TextInputType.emailAddress,
-                      validator: (email)=> EmailValidator.validate(email)
+                      validator: (_email)=> EmailValidator.validate(_email)
                           ? null
                           : "Invalid Email Address",
                       autofocus: true,
                       onSaved: (String value){
-                      email=value;  
+                      _email=value;  
 
                     },
                     ),
@@ -86,7 +90,6 @@ Widget formUI() {
                     child: TextFormField(
                         decoration: InputDecoration(
                       border: InputBorder.none,
-                      isCollapsed:true,
                       hintText: 'Username',
                       ),
                       validator: validateUsername,
@@ -111,7 +114,6 @@ Widget formUI() {
                     child: TextFormField(
                       obscureText: !_passwordVisible,
                         decoration: InputDecoration(
-                          isCollapsed:true,
                           suffixIcon: IconButton(
                           icon: Icon(
                             _passwordVisible?Icons.visibility:Icons.visibility_off,
@@ -128,7 +130,7 @@ Widget formUI() {
                       hintText: 'Password',
                       ),
                       validator: (value){
-                        Pattern pattern = r'^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{6,}$';
+                        Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';;
                         RegExp regex = new RegExp(pattern);
                         if(!regex.hasMatch(value))
                         return 'Invalid Password';
@@ -156,7 +158,6 @@ Widget formUI() {
                     child: TextFormField(
                         decoration: InputDecoration(
                       border: InputBorder.none,
-                      isCollapsed:true,
                       hintText: 'Phone Number',
                       ),
                       validator: validateMobile,
@@ -208,10 +209,7 @@ Widget formUI() {
                 ),
                 onPressed: (){
                   _sendToServer();
-                  //   Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => SplashScreen4()),
-                  // );
+                    
                 },
                 color:  HexColor("#071A52"),
                 textColor: Colors.white,
@@ -229,6 +227,7 @@ Widget formUI() {
                 style: TextStyle(fontSize: 16,),
                 textAlign: TextAlign.center,),
                 onTap: () {
+                  
                     Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -239,6 +238,18 @@ Widget formUI() {
           );} 
 
 void success(){
+  // auth.createUserWithEmailAndPassword(email: _email, password: pass);
+  DBRef.child("$uname").set({
+    'uname': '$uname',
+    'uemail': '$_email',
+    'upass': '$pass',
+    'upno': '$pno',
+    'ugender': '$gender',
+  });
+  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyBottomNav(uname:'$uname')),
+                  );
   final snackbar = new SnackBar(
     content: new Text("Registeration Sucessful"),
   );
@@ -247,7 +258,7 @@ void success(){
 }
 String validateUsername(String value) {
   if(value.length==0) {
-    return "Name is required";
+    return "Username is required";
   }
 }
 
@@ -282,7 +293,7 @@ _sendToServer(){
   if(_key.currentState.validate()){
     _key.currentState.save();
     success();
-    print("Userame: $uname,Email: $email, Password: $pass and Phone No: $pno, gender=$gender");
+    print("Userame: $uname,Email: $_email, Password: $pass and Phone No: $pno, gender=$gender");
   }
   else{
     setState(() {

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "23014501771",
+    "firebase_url": "https://rent-cafe.firebaseio.com",
+    "project_id": "rent-cafe",
+    "storage_bucket": "rent-cafe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23014501771:android:83d0fbc3c0a45c095f938e",
+        "android_client_info": {
+          "package_name": "com.example.rent_cafe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23014501771-rajrg3asjlc7n5ur6anko3sj0nagah09.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXvjTSIXZCeMCuSvfWKk0twN6zMuQK62k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23014501771-rajrg3asjlc7n5ur6anko3sj0nagah09.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
